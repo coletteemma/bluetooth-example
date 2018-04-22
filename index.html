@@ -44,6 +44,7 @@
                     console.log('> Connected:' + device.gatt.connected);
                     selected_device = device;
                     console.log(selected_device);
+                    alert("Found device " + device.name + " with connected status " + device.gatt.connected);
                 })
                 .catch(error => {
                     alert('ERROR: ' + error);

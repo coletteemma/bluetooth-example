@@ -71,18 +71,20 @@
                         alert("ERROR: could not connect - " + error);
                         setConnectedStatus(false);
                     });
-                function onDisconnected() {
-                    console.log("onDisconnected");
-                    resetUI();
-                }
-                function resetUI() {
-                    setConnectedStatus(false);
-                    setDiscoveryStatus(false);
-                    document.getElementById('model_number').innerHTML = "";
-                    document.getElementById('accelerometer_data').innerHTML = "";
-                }
             }
-        
+        }
+        function onDisconnected() {
+            console.log("onDisconnected");
+            resetUI();
+        }
+        function resetUI() {
+            setConnectedStatus(false);
+            setDiscoveryStatus(false);
+            document.getElementById('model_number').innerHTML = "";
+            document.getElementById('accelerometer_data').innerHTML = "";
+        }
+            
+
 
         function readModelNumber() {
             console.log("readModelNumber");

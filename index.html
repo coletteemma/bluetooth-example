@@ -107,7 +107,7 @@ function discoverSvcsAndChars()
                 has_device_information_service = true;
             }
             console.log('getting characteristics for service' + service.uuid);
-            service.getCharacteristics.then(characteristics=>{
+            service.getCharacteristics().then(characteristics=>{
                 console.log('service' + service.uuid);
                 characteristics_discovered = 0;
                 characteristic_count = characteristics.length;

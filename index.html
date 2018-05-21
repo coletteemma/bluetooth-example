@@ -148,13 +148,13 @@ function discoverSvcsAndChars()
                         document.getElementById('btn_scan').innerHTML = "Discover devices";
                     }
                 }
-                function setDiscoverStatus(status){
+                function setDiscoveryStatus(status){
                         services_discovered = status;
                         document.getElementById('status_discovered').innerHTML = status;
                 }
                 function resetUI(){
                     setConnectedStatus(false);
-                    setDiscoverStatus(false);
+                    setDiscoveryStatus(false);
                     document.getElementById('model_number').innerHTML = "";
                     document.getElementById('accelerometer_data').innerHTML = "";
                     

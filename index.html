@@ -1,335 +1,192 @@
-<html>
+<html> 
 <head>
        <script>
-
-var connected = false;
-var services_discovered = false;
-var selected_device;
-var connected_server;
-var notifications_enabled = false;
-// service UUIDs
-ACCELEROMETER_SERVICE = 'e95d0753-251d-470a-a062-fa1922dfa9a8';
-LED_SERVICE = 'e95dd91d-251d-470a-a062-fa1922dfa9a8';
-DEVICE_INFORMATION_SERVICE = '0000180a-0000-1000-8000-00805f9b34fb';
-// presence of services and characteristics
-var has_accelerometer_service = false;
-var has_accelerometer_data = false;
-var has_led_service = false;
-var has_led_matrix_state = false;
-var has_device_information_service = false;
-var has_model_name_string = false;
-// characteristic UUIDs
-ACCELEROMETER_DATA = 'e95dca4b-251d-470a-a062-fa1922dfa9a8';
-LED_MATRIX_STATE = 'e95d7b77-251d-470a-a062-fa1922dfa9a8';
-MODEL_NUMBER_STRING = '00002a24-0000-1000-8000-00805f9b34fb';
-// cached characteristics
-var accelerometer_data;
-var led_matrix_state;
-var model_number_string;
-function discoverDevicesOrDisconnect() {
-       console.log("discoverDevicesOrDisconnect: connected=" +
+             var connected = false;
+             var services_discovered = false;
+             var selected_device;
+             var connected_server;
+             // service UUIDs
+             ACCELEROMETER_SERVICE = 'e95d0753-251d-470a-a062-fa1922dfa9a8';
+             LED_SERVICE = 'e95dd91d-251d-470a-a062-fa1922dfa9a8';
+             DEVICE_INFORMATION_SERVICE = '0000180a-0000-1000-8000-00805f9b34fb';
+             // presence of services and characteristics
+             var has_accelerometer_service = false;
+             var has_accelerometer_data = false;
+             var has_led_service = false;
+             var has_led_matrix_state = false;
+             var has_device_information_service = false;
+             var has_model_name_string = false;
+             // characteristic UUIDs
+             ACCELEROMETER_DATA = 'e95dca4b-251d-470a-a062-fa1922dfa9a8';
+             LED_MATRIX_STATE = 'e95d7b77-251d-470a-a062-fa1922dfa9a8';
+             MODEL_NUMBER_STRING = '00002a24-0000-1000-8000-00805f9b34fb';
+             function discoverDevicesOrDisconnect() {
+            console.log("discoverDevicesOrDisconnect");
        if (!connected) {
-             discoverDevices();
-       } else {
-             selected_device.gatt.disconnect();
-             resetUI();
-} }
+        
+       discoverDevices();}
+ else {
+       selected_device.gatt.disconnect();
+resetUI(); }
 function discoverDevices() {
        console.log("discoverDevices");
+       setConnectedStatus(false);
+       setDiscoveryStatus(false);
        var options = {
              filters: [{ namePrefix: 'BBC' }],
-￼￼￼                           optionalServices: [DEVICE_INFORMATION_SERVICE,
+             optionalServices: [DEVICE_INFORMATION_SERVICE,
 ACCELEROMETER_SERVICE, LED_SERVICE]
-￼￼device.name);
-device.gatt.connected);
-}
-status;
-"Disconnect";
-"Discover Devices";
-document.getElementById('status_connected').innerHTML =
-if (status == true) {
-       document.getElementById('btn_scan').innerHTML =
-} else {
-       document.getElementById('btn_scan').innerHTML =
-status;
-status;
-} }
-function setDiscoveryStatus(status) {
-       services_discovered = status;
-       document.getElementById('status_discovered').innerHTML =
-}
-function setNotificationsStatus(status) {
-       notifications_enabled = status;
-       document.getElementById('status_notifications').innerHTML =
-}
+                    }
+                    navigator.bluetooth.requestDevice(options)
+                           .then(device => {
+                               console.log('name' + device.name);
+                               console.log('id' + device.id);
+                               console.log('connected' + device.gatt.connected);
+                               selected_device  = device;
+                               connect();
+                           })
+                           .catch(error=>{
+                               alert('error' + error);
+                               console.log('error' + error);
+                           });
+}       
 function readModelNumber() {
        console.log("readModelNumber");
-       // state validation
-       if (!connected) {
-using this function");
-completed");
-return; }
-if (!services_discovered) {
-       alert("Error: Service discovery has not yet
-return; }
-if (!has_device_information_service) {
-       alert("Error: The connected device does not contain
 }
-navigator.bluetooth.requestDevice(options)
-       .then(device => {
-                    console.log('> Name:
-                    console.log('> Id:
-                    console.log('> Connected:
-                    selected_device = device;
-                    console.log(selected_device);
-                    connect();
-             })
-             .catch(error => {
-                    alert('ERROR: ' + error);
-                    console.log('ERROR: ' + error);
-});
-function setConnectedStatus(status) {
-       connected = status;
-' +
-' + device.id);
-' +
-alert("Error: Discover and connect to a device before
-the device information service");
-                           return;
-                    }
-                    if (!has_model_name_string) {
-                           alert("Error: The connected device does not contain
-the model name string characteristic");
-￼￼￼
-￼￼￼￼￼8").decode(data);
-return; }
-model_number_string.readValue()
-       .then(value => {
-             data = new Uint8Array(value.buffer);
-             model_number_string = new TextDecoder("utf-
-             console.log(model_number_string);
-document.getElementById("model_number").innerHTML = model_number_string;
-                    })
-                    .catch(error => {
-                           console.log('Error: ' + error);
-                           alert('Error: ' + error);
-                           return;
-});
+function randomLEDs() {
+       console.log("randomLEDs");
+} 
+function toggleAccelerometerNotifications() {
+       console.log("toggleAccelerometerNotifications");
+} 
+function connect() {
+       if (connected == false) {
+           console.log("service dicsonnected");
+           selected_device.gatt.connect().then(
+               function(server){
+               console.log("connected to " + device.id);
+               setConnectedStatus(true);
+               connected_server = server;
+               selected_device.addEventListener('gattserverdisconnected',onDisconnected);
+               discoverSvcsAndChars();},
+               function(error){
+                   console.log("error could not connect");
+                   alert("error could not connect");
+                   setConnectedStatus(false);
+               });
        }
-       function randomLEDs() {
-             console.log("randomLEDs");
-             // state validation
-             if (!connected) {
-using this function");
-completed");
-the LED service");
-return; }
-if (!services_discovered) {
-       alert("Error: Service discovery has not yet
-return; }
-if (!has_led_service) {
-       alert("Error: The connected device does not contain
-return; }
-if (!has_led_matrix_state) {
-       alert("Error: The connected device does not contain
-alert("Error: Discover and connect to a device before
-the LED matrix state characteristic");
-                           return;
+}
+function onDisconnected()
+{
+    console.log("ondisconnected");
+    resetUI();
+}
+function discoverSvcsAndChars()
+{
+    console.log('dicover services and chars for server' + connected_server);
+    connected_server.getPrimaryServices().then(services=>{
+        has_accelerometer_service = false;
+        has_led_service = false;
+        has_device_information_service = false;
+        services_discovered = 0;
+        service_count = services.length;
+        console.log('got ' + service_count + ' services');
+        services.forEach(service=>{
+            if (service.uuid == ACCELEROMETER_SERVICE)
+            {
+                has_accelerometer_service = true;
+            }
+            if (service.uuid == LED_SERVICE)
+            {
+                has_led_service = true;
+            }
+            if (service.uuid == DEVICE_INFORMATION_SERVICE)
+            {
+                has_device_information_service = true;
+            }
+            console.log('getting characteristics for service' + service.uuid);
+            service.getCharacteristics.then(characteristics=>{
+                console.log('service' + service.uuid);
+                characteristics_discovered = 0;
+                characteristic_count = characteristics.length;
+                characteristics.forEach(characteristic=>{
+                    characteristics_discovered++;
+                    console.log('discovered characteristic ' + characteristic.uuid);
+                    if (characteristic.uuid == ACCELEROMETER_DATA){
+                        accelerometer_data = characteristic;
+                        has_accelerometer_data = true;
                     }
-                    var led_array = [0, 0, 0, 0, 0];
-                    led_array[0] = Math.floor(Math.random() * 32);
-                    led_array[1] = Math.floor(Math.random() * 32);
-                    led_array[2] = Math.floor(Math.random() * 32);
-                    led_array[3] = Math.floor(Math.random() * 32);
-                    led_array[4] = Math.floor(Math.random() * 32);
-                    var led_matrix_data = new Uint8Array(led_array);
-                    led_matrix_state.writeValue(led_matrix_data.buffer)
-                           .then(_ => {
-                                 console.log('LED matrix state changed');
-                           })
-                           .catch(error => {
-                                 console.log('Error: ' + error);
-                                 alert('Error: ' + error);
-                                 return;
-});
-             }
-             function toggleAccelerometerNotifications() {
-                    console.log("toggleAccelerometerNotifications");
-                    if (!connected) {
-                           alert("Error: Discover and connect to a device before
-using this function");
-return; }
-                    if (!services_discovered) {
-￼￼￼
-￼￼￼stopped');
-+ error);
-error);
-console.log("ERROR: could not connect - "
-alert("ERROR: could not connect - " +
-setConnectedStatus(false);
-alert("Error: Service discovery has not yet
-￼￼completed");
-return; }
-if (!has_accelerometer_service) {
-       alert("Error: The connected device does not contain
-the accelerometer service");
-                           return;
+                    if (characteristic.uuid == LED_MATRIX_STATE){
+                        led_matrix_state = characteristic;
+                        has_led_matrix_state = true;
                     }
-                    if (!has_accelerometer_data) {
-                           alert("Error: The connected device does not contain
-the accelerometer data characteristic");
-started');
-return; }
-if (!notifications_enabled) {
-       accelerometer_data.startNotifications().then(_ => {
-             console.log('accelerometer notifications
-             setNotificationsStatus(true);
-accelerometer_data.addEventListener('characteristicvaluechanged',
-                                 onAccelerometerData);
-})
-} else {
-       accelerometer_data.stopNotifications()
-             .then(_ => {
-                    console.log('accelerometer notifications
-                    setNotificationsStatus(false);
-.catch(error => {
-       console.log('Error: ' + error);
-       alert('Error: ' + error);
-       return;
-});
-       accelerometer_data.removeEventListener('characteristicvaluechanged',
-                                               onAccelerometerData);
-                                 })
-                                 .catch(error => {
-                                        console.log('Could not stop
-accelerometer_data notifications: ' + error);
-});
-} }
-             function connect() {
-                    if (connected == false) {
-server.device.id);
-server.connected);
-console.log("connecting");
-selected_device.gatt.connect().then(
-       function (server) {
-             console.log("Connected to " +
-             console.log("connected=" +
-             setConnectedStatus(true);
-             connected_server = server;
-selected_device.addEventListener('gattserverdisconnected',
-                                        onDisconnected);
-                                 discoverSvcsAndChars();
-},
-function (error) {
-});
-￼￼￼
-￼￼￼} }
-function onDisconnected() {
-       console.log("onDisconnected");
-       resetUI();
-}
-function discoverSvcsAndChars() {
-       console.log("discoverSvcsAndChars server=" +
-￼￼connected_server);
-services");
-ACCELEROMETER_SERVICE) {
-DEVICE_INFORMATION_SERVICE) {
-true;
-service ' + service.uuid);
-connected_server.getPrimaryServices()
-       .then(services => {
-             has_accelerometer_service = false;
-             has_led_service = false;
-             has_device_information_service = false;
-             services_discovered = 0;
-             service_count = services.length;
-             console.log("Got " + service_count + "
-             services.forEach(service => {
-                    if (service.uuid ==
-                           has_accelerometer_service = true;
+                    if (characteristic.uuid == MODEL_NUMBER_STRING){
+                        model_number_string = characteristic;
+                        has_model_name_string = true;
                     }
-                    if (service.uuid == LED_SERVICE) {
-                           has_led_service = true;
-                    if (service.uuid ==
-                           has_device_information_service =
-                    console.log('Getting Characteristics for
-characteristics.length;
-       characteristics.forEach(characteristic => {
-       characteristics_discovered++;
-Characteristic: ' + characteristic.uuid);
-ACCELEROMETER_DATA) {
-characteristic;
-       has_accelerometer_data = true;
-LED_MATRIX_STATE) {
-characteristic;
-= true;
-MODEL_NUMBER_STRING) {
-console.log('>>
-if (characteristic.uuid ==
-       accelerometer_data =
-}
-if (characteristic.uuid ==
-       led_matrix_state =
-       has_led_matrix_state
-}
-if (characteristic.uuid ==
-}
-}
-service.getCharacteristics().then(characteristics => {
-                                        console.log('> Service: ' +
-service.uuid);
-services_discovered++;
-characteristics_discovered = 0;
-characteristic_count =
-￼￼￼
-￼￼￼￼￼characteristic;
-= true;
-model_number_string =
-has_model_name_string
-                                                     if (services_discovered ==
-service_count && characteristics_discovered == characteristic_count) {
-DISCOVERY");
-       setDiscoveryStatus(true);
-});
-}
-             function resetUI() {
+                    if (services_discovered == service_count && characteristics_discovered == characteristic_count)
+                    {
+                        //found them all
+                        console.log('all services & characteristics discovered');
+                        setDiscoveryStatus(true);
+                    }
+                });
+                });
+                });
+                });
+
+                }
+                function setConnectedStatus(status){
+                    connected = status;
+                    document.getElementById('status_connected').innerHTML = status;
+                    if (status == true){
+                        document.getElementById('btn_scan').innerHTML = "Disconnect";
+                    }
+                    else{
+                        document.getElementById('btn_scan').innerHTML = "Discover devices";
+                    }
+                }
+                function setDiscoverStatus(status){
+                        services_discovered = status;
+                        document.getElementById('status_discovered').innerHTML = status;
+                }
+                function resetUI(){
                     setConnectedStatus(false);
-} });
-}
-}); });
-setDiscoveryStatus(false);
-setNotificationsStatus(false);
-document.getElementById('model_number').innerHTML = "";
-document.getElementById('accelerometer_data').innerHTML = "";
-             function onAccelerometerData(event) {
-                    console.log("onAccelerometerData");
-                    buffer = event.target.value.buffer;
-                    dataview = new DataView(buffer);
-                    X = dataview.getUint16(0, true);
-                    Y = dataview.getUint16(2, true);
-                    Z = dataview.getUint16(4, true);
-                    console.log("X=" + X + ", Y=" + Y + ", Z+" + Z);
-                    document.getElementById("accelerometer_data").innerHTML =
-"X=" + X + ", Y=" + Y + ", Z=" + Z;
-             }
-       </script>
-</head>
+                    setDiscoverStatus(false);
+                    document.getElementById('model_number').innerHTML = "";
+                    document.getElementById('accelerometer_data').innerHTML = "";
+                    
+                }
+                </script> 
+</head> 
 <body>
        <h1>Web Bluetooth</h1>
        <h2>Status</h2>
        <table border="1">
-<tr>
-<td>
+<tr> <td> 
                            <b>Connected</b>
                     </td>
-                    <td>
-                           <b>Service Discovery Completed</b>
-</td> <td>
-                           <b>Notifications</b>
-                    </td>
-</tr> <tr>
-             </tr>
-       </table>
+}); }); 
+} } 
+             function setDiscoveryStatus(status) {
+                    services_discovered = status;
+                    document.getElementById('status_discovered').innerHTML =
+status; } 
+             function resetUI() {
+                    setConnectedStatus(false);
+} }); 
+setDiscoveryStatus(false);
+document.getElementById('model_number').innerHTML = "";
+document.getElementById('accelerometer_data').innerHTML = "";
+console.log("FINISHED
+             <td>
+                    <b>Service Discovery Completed</b>
+</td> <td> 
+                    <b>Notifications</b>
+             </td>
+</tr> <tr> 
+       </tr>
+</table>
 <td id="status_connected">false</td>
 <td id="status_discovered">false</td>
 <td id="status_notifications">false</td>
@@ -339,10 +196,7 @@ Devices</button>
        <hr>
        <h2>Reading and Writing</h2>
        <h3>Read Characteristic - Model Number</h3>
-}
-console.log("FINISHED
-￼￼￼
-<button id="btn_read" onclick="readModelNumber()">Read Model
+       <button id="btn_read" onclick="readModelNumber()">Read Model
 Number</button>
        <div id="model_number"></div>
        <h3>Write Characteristic - Randomise Lights</h3>
@@ -350,7 +204,7 @@ Number</button>
        <hr>
        <h2>Notifications - Accelerometer X, Y, Z</h2>
        <button id="btn_notify"
-onclick="toggleAccelerometerNotifications()">Toggle Notifications</button> 
+onclick="toggleAccelerometerNotifications()">Toggle Notifications</button>
        <div id="accelerometer_data"></div>
 </body>
 </html>

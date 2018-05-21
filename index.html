@@ -20,14 +20,16 @@
              ACCELEROMETER_DATA = 'e95dca4b-251d-470a-a062-fa1922dfa9a8';
              LED_MATRIX_STATE = 'e95d7b77-251d-470a-a062-fa1922dfa9a8';
              MODEL_NUMBER_STRING = '00002a24-0000-1000-8000-00805f9b34fb';
+
              function discoverDevicesOrDisconnect() {
             console.log("discoverDevicesOrDisconnect");
-       if (!connected) {
+            if (!connected) {
         
-       discoverDevices();}
- else {
-       selected_device.gatt.disconnect();
-resetUI(); }
+                discoverDevices();}
+             else {
+                selected_device.gatt.disconnect();
+                resetUI(); }
+             }   
 function discoverDevices() {
        console.log("discoverDevices");
        setConnectedStatus(false);

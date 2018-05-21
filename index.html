@@ -66,7 +66,7 @@ function connect() {
            console.log("service dicsonnected");
            selected_device.gatt.connect().then(
                function(server){
-               console.log("connected to " + device.id);
+               console.log("connected to " + selected_device.id);
                setConnectedStatus(true);
                connected_server = server;
                selected_device.addEventListener('gattserverdisconnected',onDisconnected);
